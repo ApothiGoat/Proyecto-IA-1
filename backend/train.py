@@ -1,7 +1,7 @@
 import os
 import pandas as pd
 from preprocessing.text_cleaning import clean_text
-
+from model.bag_of_words import build_vocabulary, vectorize_dataset
 
 # Ruta absoluta del backend
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -63,6 +63,18 @@ def main():
 
     # 3. Aplicar limpieza
     df["tokens"] = df["text"].apply(clean_text)
+
+    # Construir vocabulario
+    vocab = build_vocabulary(df["tokens"])
+
+    print("\nTamaño del vocabulario:")
+    print(len(vocab))
+
+    # Vectorizar dataset
+    X = vectorize_dataset(df["tokens"], vocab)
+
+    print("\nEjemplo de vector:")
+    print(X[0][:20])  # primeros 20 valores
 
     # 4. Mostrar información útil
     print("\nPrimeras filas procesadas:")
