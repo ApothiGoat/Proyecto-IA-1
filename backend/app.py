@@ -20,7 +20,7 @@ with open(os.path.join(BASE_DIR, "models", "vocab.pkl"), "rb") as f:
 
 @app.route("/")
 def home():
-    return "API funcionando 🚀"
+    return "API funcionando"
 
 
 @app.route("/predict", methods=["POST"])
