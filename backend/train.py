@@ -1,25 +1,85 @@
-import pandas as pd 
-from preprocessing.text_cleaning import clean_text  
+import os
+import pandas as pd
+from preprocessing.text_cleaning import clean_text
 
-# 1. Cargar dataset desde archivo CSV
-df = pd.read_csv("backend/data/dataset_og/customer_support_tickets.csv")
 
-# 2. Crear nueva columna "text"
-# Une el subject + description (mejor contexto para el modelo)
-df["text"] = df["Ticket Subject"] + " " + df["Ticket Description"]
+# Ruta absoluta del backend
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
-# 3. Quedarte solo con lo importante:
-# - texto (input)
-# - tipo de ticket (output)
-df = df[["text", "Ticket Type"]]
+# Ruta del dataset nuevo
+DATASET_PATH = os.path.join(
+    BASE_DIR,
+    "data",
+    "dataset_og",
+    "Bitext_Sample_Customer_Support_Training_Dataset_27K_responses-v11.csv"
+)
 
-# 4. Eliminar filas con valores nulos
-# Evita errores al procesar texto
-df = df.dropna()
 
-# 5. Aplicar preprocesamiento a cada fila
-# .apply() ejecuta la función clean_text en cada texto
-df["tokens"] = df["text"].apply(clean_text)
+def load_dataset():
+    """
+    Carga el dataset Bitext desde CSV.
+    """
+    df = pd.read_csv(DATASET_PATH)
+    return df
 
-# 6. Mostrar primeras filas para verificar resultados
-print(df.head())
+
+def prepare_data(df):
+    """
+    Prepara el dataset para clasificación.
+
+    Entrada:
+    - instruction: texto escrito por el usuario
+
+    Salida:
+    - category: clase que el modelo debe predecir
+    """
+
+    # Verificar que las columnas existan
+    required_columns = ["instruction", "category"]
+
+    for col in required_columns:
+        if col not in df.columns:
+            raise ValueError(f"Falta la columna obligatoria: {col}")
+
+    # Crear columnas estándar para nuestro proyecto
+    df["text"] = df["instruction"]
+    df["label"] = df["category"]
+
+    # Quedarnos solo con lo necesario
+    df = df[["text", "label"]]
+
+    # Eliminar filas vacías
+    df = df.dropna()
+
+    return df
+
+
+def main():
+    # 1. Cargar dataset
+    df = load_dataset()
+
+    # 2. Preparar columnas
+    df = prepare_data(df)
+
+    # 3. Aplicar limpieza
+    df["tokens"] = df["text"].apply(clean_text)
+
+    # 4. Mostrar información útil
+    print("\nPrimeras filas procesadas:")
+    print(df.head())
+
+    print("\nCantidad de registros:")
+    print(len(df))
+
+    print("\nClases encontradas:")
+    print(df["label"].value_counts())
+
+    print("\nEjemplo de texto original:")
+    print(df.iloc[0]["text"])
+
+    print("\nEjemplo de tokens:")
+    print(df.iloc[0]["tokens"])
+
+
+if __name__ == "__main__":
+    main()

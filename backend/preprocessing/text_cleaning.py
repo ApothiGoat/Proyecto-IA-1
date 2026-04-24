@@ -1,37 +1,45 @@
-import re  # Librería para expresiones regulares
-import nltk  # Librería de NLP
-from nltk.corpus import stopwords  # Lista de palabras comunes
-from nltk.stem import PorterStemmer  # Algoritmo para reducir palabras a su raíz
+import re
+import nltk
+from nltk.corpus import stopwords
+from nltk.stem import PorterStemmer
 
-# Descargar recursos necesarios de NLTK (solo la primera vez)
-nltk.download('stopwords')
-# Crear conjunto de stopwords en ingles
-stop_words = set(stopwords.words('english'))
+# Descarga las stopwords si no existen
+nltk.download("stopwords")
 
-# Inicializar el stemmer (para reducir palabras a su raíz)
+# Stopwords en inglés
+stop_words = set(stopwords.words("english"))
+
+# Stemmer para reducir palabras a su raíz
 stemmer = PorterStemmer()
 
 
 def clean_text(text):
     """
-    Esta función recibe un texto y devuelve una lista de palabras limpias (tokens)
+    Limpia una solicitud de cliente y devuelve una lista de tokens procesados.
     """
 
-    # 1. Convertir todo a minúsculas
+    # Convertir a string por seguridad
+    text = str(text)
+
+    # Eliminar placeholders tipo {{Order Number}}, {{Website URL}}, etc.
+    text = re.sub(r"\{\{.*?\}\}", " ", text)
+
+    # Convertir a minúsculas
     text = text.lower()
-    
-    # 2. Eliminar todo lo que no sea letras o espacios
-    text = re.sub(r'[^a-z\s]', '', text)
-    
-    # 3. Tokenización (separar en palabras)
+
+    # Eliminar caracteres que no sean letras o espacios
+    text = re.sub(r"[^a-z\s]", " ", text)
+
+    # Eliminar espacios repetidos
+    text = re.sub(r"\s+", " ", text).strip()
+
+    # Tokenizar separando por espacios
     tokens = text.split()
-    
-    # 4. Eliminar stopwords (palabras sin valor semántico)
+
+    # Eliminar stopwords
     tokens = [word for word in tokens if word not in stop_words]
-    
-    # 5. Stemming (reducir palabras a su raíz)
-    # Ej: "running", "runs", "ran" → "run"
+
+    # Aplicar stemming
     tokens = [stemmer.stem(word) for word in tokens]
-    
-    # Retorna lista de palabras procesadas
+
     return tokens
