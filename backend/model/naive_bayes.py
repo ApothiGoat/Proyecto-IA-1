@@ -81,3 +81,36 @@ class NaiveBayes:
 
     def predict_all(self, X):
         return [self.predict(x) for x in X]
+    
+    def predict_proba(self, vector):
+        """
+        Devuelve probabilidades reales por clase usando softmax sobre log-probabilidades.
+        """
+
+        log_scores = {}
+
+        for c in self.classes:
+            log_prob = math.log(self.class_probs[c])
+
+            for i, count in enumerate(vector):
+                if count > 0:
+                    log_prob += count * math.log(self.word_probs[c][i])
+
+            log_scores[c] = log_prob
+
+        # Truco numérico para evitar overflow
+        max_log = max(log_scores.values())
+
+        exp_scores = {
+            c: math.exp(log_scores[c] - max_log)
+            for c in self.classes
+        }
+
+        total = sum(exp_scores.values())
+
+        probabilities = {
+            c: exp_scores[c] / total
+            for c in self.classes
+        }
+
+        return probabilities

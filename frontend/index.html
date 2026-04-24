@@ -1,37 +1,67 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <title>Sistema de Tickets</title>
-  <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sistema de Tickets IA</title>
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
 
-<div class="container">
-  <h1>Sistema de Tickets</h1>
+<div class="layout">
+  <section class="hero">
+    <span class="badge">Clasificador IA</span>
+    <h1>Sistema de Tickets</h1>
+    <p>
+      Ingresa una solicitud de soporte y el modelo clasificará automáticamente
+      el departamento correspondiente.
+    </p>
+  </section>
 
-  <div class="card">
-    <p><strong>ID Ticket:</strong> <span id="ticketId"></span></p>
-
-    <label>Subject</label>
-    <input type="text" id="subject" placeholder="Ej: Payment issue">
-
-    <label>Description</label>
-    <textarea id="description" placeholder="Describe el problema..."></textarea>
-
-    <button onclick="sendTicket()">Clasificar Ticket</button>
-
-    <div id="result" class="hidden">
-      <h2>Resultado</h2>
-      <p><strong>Categoría:</strong> <span id="prediction"></span></p>
-
-      <p><strong>Confianza:</strong></p>
-      <div class="bar">
-        <div id="confidenceBar"></div>
+  <main class="card">
+    <div class="ticket-header">
+      <div>
+        <p class="label-small">Ticket ID</p>
+        <h2 id="ticketId"></h2>
       </div>
-      <span id="confidenceText"></span>
+      <span class="status">Nuevo</span>
     </div>
-  </div>
+
+    <div class="form-group">
+      <label for="subject">Subject</label>
+      <input type="text" id="subject" placeholder="Ej: Payment issue" />
+    </div>
+
+    <div class="form-group">
+      <label for="description">Description</label>
+      <textarea id="description" placeholder="Describe el problema del cliente..."></textarea>
+    </div>
+
+    <button onclick="sendTicket()" id="classifyBtn">
+      Clasificar Ticket
+    </button>
+
+    <section id="result" class="result hidden">
+      <div class="result-header">
+        <p class="label-small">Categoría predicha</p>
+        <h2 id="prediction"></h2>
+      </div>
+
+      <div class="confidence-box">
+        <div class="confidence-title">
+          <span>Confianza</span>
+          <strong id="confidenceText">0%</strong>
+        </div>
+
+        <div class="bar">
+          <div id="confidenceBar"></div>
+        </div>
+      </div>
+
+      <h3>Probabilidades por clase</h3>
+      <div id="probabilities" class="probabilities"></div>
+    </section>
+  </main>
 </div>
 
 <script src="script.js"></script>
