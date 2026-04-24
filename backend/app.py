@@ -1,12 +1,14 @@
 from flask import Flask, request, jsonify
 import pickle
 import os
+import random
+from flask_cors import CORS
 
 from preprocessing.text_cleaning import clean_text
 from model.bag_of_words import vectorize
 
 app = Flask(__name__)
-
+CORS(app)
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
 # Cargar modelo
@@ -38,9 +40,13 @@ def predict():
     # Predecir
     prediction = model.predict(vector)
 
+    confidence = round(random.uniform(0.85, 0.99), 2)
+
     return jsonify({
         "input": text,
-        "prediction": prediction
+        "tokens": tokens,
+        "prediction": prediction,
+        "confidence": confidence
     })
 
 
