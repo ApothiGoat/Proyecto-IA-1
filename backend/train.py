@@ -3,6 +3,8 @@ import pandas as pd
 from preprocessing.text_cleaning import clean_text
 from model.bag_of_words import build_vocabulary, vectorize_dataset
 from model.naive_bayes import NaiveBayes
+from evaluation.kfold import k_fold_split
+from evaluation.metrics import accuracy, precision_recall_f1, macro_f1, confusion_matrix
 
 # Ruta absoluta del backend
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -94,6 +96,42 @@ def main():
     print("\nPredicción ejemplo:")
     print(pred)
     print("Real:", y[0])
+
+
+    #6. métricas de validacion
+    folds = k_fold_split(X, y, k=5)
+
+    accuracies = []
+    macro_f1_scores = []
+
+    for i, (X_train, y_train, X_test, y_test) in enumerate(folds):
+
+        model = NaiveBayes()
+        model.train(X_train, y_train)
+
+        y_pred = model.predict_all(X_test)
+
+        acc = accuracy(y_test, y_pred)
+        prec, rec, f1_per_class = precision_recall_f1(y_test, y_pred)
+        mf1 = macro_f1(f1_per_class)
+
+        accuracies.append(acc)
+        macro_f1_scores.append(mf1)
+
+        print(f"\nFold {i+1}")
+        print("Accuracy:", acc)
+        print("Macro F1:", mf1)
+
+        cm = confusion_matrix(y_test, y_pred)
+
+        print("\nMatriz de confusión:")
+        for real_class in cm:
+            print(real_class, cm[real_class])
+
+    print("\nResultados Finales:")
+    print("Accuracy promedio:", sum(accuracies) / len(accuracies))
+    print("Macro F1 promedio:", sum(macro_f1_scores) / len(macro_f1_scores))
+
 
     # 6. Mostrar información útil
     print("\nPrimeras filas procesadas:")
