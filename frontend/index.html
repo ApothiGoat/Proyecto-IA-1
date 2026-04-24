@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Sistema de Tickets</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="container">
+  <h1>Sistema de Tickets</h1>
+
+  <div class="card">
+    <p><strong>ID Ticket:</strong> <span id="ticketId"></span></p>
+
+    <label>Subject</label>
+    <input type="text" id="subject" placeholder="Ej: Payment issue">
+
+    <label>Description</label>
+    <textarea id="description" placeholder="Describe el problema..."></textarea>
+
+    <button onclick="sendTicket()">Clasificar Ticket</button>
+
+    <div id="result" class="hidden">
+      <h2>Resultado</h2>
+      <p><strong>Categoría:</strong> <span id="prediction"></span></p>
+
+      <p><strong>Confianza:</strong></p>
+      <div class="bar">
+        <div id="confidenceBar"></div>
+      </div>
+      <span id="confidenceText"></span>
+    </div>
+  </div>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
