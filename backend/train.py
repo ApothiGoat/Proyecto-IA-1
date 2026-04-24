@@ -2,6 +2,7 @@ import os
 import pandas as pd
 from preprocessing.text_cleaning import clean_text
 from model.bag_of_words import build_vocabulary, vectorize_dataset
+from model.naive_bayes import NaiveBayes
 
 # Ruta absoluta del backend
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -64,7 +65,7 @@ def main():
     # 3. Aplicar limpieza
     df["tokens"] = df["text"].apply(clean_text)
 
-    # Construir vocabulario
+    # 4. Construir vocabulario (BoW)
     vocab = build_vocabulary(df["tokens"])
 
     print("\nTamaño del vocabulario:")
@@ -76,7 +77,25 @@ def main():
     print("\nEjemplo de vector:")
     print(X[0][:20])  # primeros 20 valores
 
-    # 4. Mostrar información útil
+    #5. Naive Bayes Labels
+    y = df["label"].tolist()
+
+    # Crear modelo
+    model = NaiveBayes()
+
+    # Entrenar
+    model.train(X, y)
+
+    print("\nModelo entrenado!")
+
+    # Probar con un ejemplo
+    pred = model.predict(X[0])
+
+    print("\nPredicción ejemplo:")
+    print(pred)
+    print("Real:", y[0])
+
+    # 6. Mostrar información útil
     print("\nPrimeras filas procesadas:")
     print(df.head())
 
