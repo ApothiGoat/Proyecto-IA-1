@@ -1,7 +1,6 @@
 from flask import Flask, request, jsonify
 import pickle
 import os
-import random
 from flask_cors import CORS
 
 from preprocessing.text_cleaning import clean_text
@@ -38,15 +37,18 @@ def predict():
     vector = vectorize(tokens, vocab)
 
     # Predecir
-    prediction = model.predict(vector)
+    probabilities = model.predict_proba(vector)
+    prediction = max(probabilities, key=probabilities.get)
+    confidence = probabilities[prediction]
 
-    confidence = round(random.uniform(0.85, 0.99), 2)
+
 
     return jsonify({
         "input": text,
         "tokens": tokens,
         "prediction": prediction,
-        "confidence": confidence
+        "confidence": confidence,
+        "probabilities": probabilities
     })
 
 
